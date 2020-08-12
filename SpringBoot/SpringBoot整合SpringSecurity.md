@@ -4,10 +4,11 @@ SpringSecurity是基于Spring应用提供的声明式的安全保护性的框架
 ### 创建SpringBoot项目
 ####创建模块（这里选用gradle做项目的构建工具）
 
-![1.jpg](imgs/1.jpg)
+![](https://note-imge.oss-cn-beijing.aliyuncs.com/pasteimageintomarkdown/2020-08-12/424387068894100.png?Expires=4750818545&OSSAccessKeyId=LTAI4G1a9jwwXfvRfRgyzeZ3&Signature=dokiULLyN3rZQQuno%2B8Zv9%2Brxqk%3D)
 ####选择项目依赖 
 
-![2.jpg](imgs/2.jpg)
+![](https://note-imge.oss-cn-beijing.aliyuncs.com/pasteimageintomarkdown/2020-08-12/424405046148300.png?Expires=4750818563&OSSAccessKeyId=LTAI4G1a9jwwXfvRfRgyzeZ3&Signature=%2FE3m6OWmsaEtL1j5HBeZ%2Bi9WolQ%3D)
+
 ####自定义一个端口，然后运行项目
 ```properties
 server.port=8888
@@ -46,10 +47,10 @@ public class DemoApplication {
 ```
 
 运行成功后我们注意控制台，有一串加密字符串，这是security生成的安全密码，在不做任何配置的情况下，需要用这个密码去登录，用户名为user 
-![3.jpg](imgs/3.jpg)
+![](https://note-imge.oss-cn-beijing.aliyuncs.com/pasteimageintomarkdown/2020-08-12/424416862396600.png?Expires=4750818575&OSSAccessKeyId=LTAI4G1a9jwwXfvRfRgyzeZ3&Signature=hURrRV2OTqfKLaP0OdDLjQClRe8%3D)
 
 然后访问项目，会出现如下登录框。这个登录页面是security自动配置的，后期我们也可以替换掉它。至此，基本配置已经完成了。用户名为user 密码为控制台的加密字符串。
-![4.jpg](imgs/4.jpg)
+![](https://note-imge.oss-cn-beijing.aliyuncs.com/pasteimageintomarkdown/2020-08-12/424426538004300.png?Expires=4750818585&OSSAccessKeyId=LTAI4G1a9jwwXfvRfRgyzeZ3&Signature=vboNJ12hpJ6VYHQkwLrekIpF6hw%3D)
 
 也可以在配置文件自定义账号密码
 ```properties
@@ -102,7 +103,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 如果没有admin的角色，就会显示如下页面：
-![5.jpg](imgs/5.jpg)
+![](https://note-imge.oss-cn-beijing.aliyuncs.com/pasteimageintomarkdown/2020-08-12/424438710192400.png?Expires=4750818597&OSSAccessKeyId=LTAI4G1a9jwwXfvRfRgyzeZ3&Signature=gDKfaMVmMdtA4aZ3z1EKREUFop8%3D)
 
 接下来设置通过数据库账号密码登录
 ```java
