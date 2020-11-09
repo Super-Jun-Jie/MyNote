@@ -1,0 +1,88 @@
+###redis配置修改
+- protected-mode no 远程访问需要修改
+- daemonize yes 设置进程后台启动
+- 注掉bind xxx.xx.xxx.xx
+###linux安装redis
+1. wget安装,wget -P 目录  指定路劲下载 `wget -P /usr/redis http://download.redis.io/releases/redis-6.0.6.tar.gz`
+2. 进入/usr/redis,解压 `tar -xvf redis-6.0.6.tar.gz`
+3. 进入解压的目录，执行make命令
+    ```
+    cd redis-6.0.6
+    make
+   ```
+4. `make install`
+5. 创建文件夹  conf config data `mkdir conf;mkdir config;mkdir data`
+6. 添加配置文件就可以了，下面附一个配置文件
+    ```
+    #远程连接需要注掉
+    #bind 127.0.0.1
+    #保护模式，默认yes 远程访问需要改成no
+    protected-mode no
+    port 6666
+    tcp-backlog 511
+    timeout 0
+    tcp-keepalive 300
+    #开启守护进程模式  默认为no 表示不开启，如果设置后台启动，则需要开启
+    daemonize yes
+    supervised no
+    pidfile /var/run/redis_6666.pid
+    loglevel notice
+    logfile ""
+    databases 16
+    always-show-logo yes
+    save 900 1
+    save 300 10
+    save 60 10000
+    stop-writes-on-bgsave-error yes
+    rdbcompression yes
+    rdbchecksum yes
+    dbfilename dump.rdb
+    rdb-del-sync-files no
+    dir ./
+    replica-serve-stale-data yes
+    replica-read-only yes
+    repl-diskless-sync no
+    repl-diskless-sync-delay 5
+    repl-diskless-load disabled
+    repl-disable-tcp-nodelay no
+    replica-priority 100
+    acllog-max-len 128
+    lazyfree-lazy-eviction no
+    lazyfree-lazy-expire no
+    lazyfree-lazy-server-del no
+    replica-lazy-flush no
+    lazyfree-lazy-user-del no
+    appendonly no
+    appendfilename "appendonly.aof"
+    appendfsync everysec
+    no-appendfsync-on-rewrite no
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 64mb
+    aof-load-truncated yes
+    aof-use-rdb-preamble yes
+    lua-time-limit 5000
+    slowlog-log-slower-than 10000
+    slowlog-max-len 128
+    latency-monitor-threshold 0
+    notify-keyspace-events ""
+    hash-max-ziplist-entries 512
+    hash-max-ziplist-value 64
+    list-max-ziplist-size -2
+    list-compress-depth 0
+    set-max-intset-entries 512
+    zset-max-ziplist-entries 128
+    zset-max-ziplist-value 64
+    hll-sparse-max-bytes 3000
+    stream-node-max-bytes 4096
+    stream-node-max-entries 100
+    activerehashing yes
+    client-output-buffer-limit normal 0 0 0
+    client-output-buffer-limit replica 256mb 64mb 60
+    client-output-buffer-limit pubsub 32mb 8mb 60
+    hz 10
+    dynamic-hz yes
+    aof-rewrite-incremental-fsync yes
+    rdb-save-incremental-fsync yes
+    jemalloc-bg-thread yes
+    ```
+7. 启动的时候，通过 redis-server 配置文件来启动

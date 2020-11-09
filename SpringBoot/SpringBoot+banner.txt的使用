@@ -1,0 +1,66 @@
+#SpringBoot+banner.txt设置启动界面
+##前言
+SpringBoot在启动的时候会在控制台打印SpringBoot,用久了就会感觉单调了
+##方法
+只需要在SpringBoot项目的resource文件夹下创建一个banner.txt文件,即可把banner.txt里面的内容显示到控制台了。
+##banner.txt
+这里有几个定制banner的网站,文字、图片都可以秀起来,怎么秀就看你的骚操作了。
+http://patorjk.com/software/taag  
+http://www.network-science.de/ascii/
+http://www.degraeve.com/img2txt.php
+##附上一个实例
+```text
+${AnsiColor.BRIGHT_YELLOW}  
+////////////////////////////////////////////////////////////////////  
+//                          _ooOoo_                               //  
+//                         o8888888o                              //  
+//                         88" . "88                              //  
+//                         (| ^_^ |)                              //  
+//                         O\  =  /O                              //  
+//                      ____/`---'\____                           //  
+//                    .'  \\|     |//  `.                         //  
+//                   /  \\|||  :  |||//  \                        //  
+//                  /  _||||| -:- |||||-  \                       //  
+//                  |   | \\\  -  /// |   |                       //  
+//                  | \_|  ''\---/''  |   |                       //  
+//                  \  .-\__  `-`  ___/-. /                       //  
+//                ___`. .'  /--.--\  `. . ___                     //  
+//              ."" '<  `.___\_<|>_/___.'  >'"".                  //  
+//            | | :  `- \`.;`\ _ /`;.`/ - ` : | |                 //  
+//            \  \ `-.   \_ __\ /__ _/   .-` /  /                 //  
+//      ========`-.____`-.___\_____/___.-`____.-'========         //  
+//                           `=---='                              //  
+//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        //  
+//            佛祖保佑       永不宕机      永无BUG                　//
+//////////////////////////////////////////////////////////////////// 
+```
+##banner参数配置
+1. ${AnsiColor.BRIGHT_RED}：设置控制台中输出内容的颜色
+2. ${application.version}：用来获取MANIFEST.MF文件中的版本号
+3. ${application.formatted-version}：格式化后的${application.version}版本信息
+4. ${spring-boot.version}：Spring Boot的版本号
+```properties
+spring.banner.charset=UTF-8 # Banner file encoding.
+spring.banner.location=classpath:banner.txt # Banner text resource location.
+spring.banner.image.location=classpath:banner.gif # Banner image file location (jpg or png can also be used).
+spring.banner.image.width=76 # Width of the banner image in chars.
+spring.banner.image.height= # Height of the banner image in chars (default based on image height).
+spring.banner.image.margin=2 # Left hand image margin in chars.
+spring.banner.image.invert=false # Whether images should be inverted for dark terminal themes.
+```  
+##结束语
+如果不想banner显示，可以在启动类设置。
+```java
+public class VehicleLocationDataApplication {
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication springApplication = new SpringApplication(TestApplication.class);
+        //Banner.Mode.OFF 关闭
+        springApplication.setBannerMode(Banner.Mode.OFF);
+        springApplication.run(args);
+
+        new CountDownLatch(1).await();
+    }
+
+}
+```
