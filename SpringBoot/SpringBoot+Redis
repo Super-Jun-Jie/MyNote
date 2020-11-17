@@ -1,0 +1,155 @@
+#SpringBoot+Redis的使用
+###一、SpringBoot 配置Redis
+####1.1 pom依赖
+```pom
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+        </dependency>
+```
+####1.2 properties配置文件配置redis信息
+```properties
+# Redis数据库索引（默认为0）
+spring.redis.database=0
+# Redis服务器地址
+spring.redis.host=127.0.0.1
+# Redis服务器连接端口
+spring.redis.port=6379
+# Redis服务器连接密码（默认为空）
+spring.redis.password=
+# 连接池最大连接数（使用负值表示没有限制）
+spring.redis.jedis.pool.max-active=20
+# 连接池最大阻塞等待时间（使用负值表示没有限制）
+spring.redis.jedis.pool.max-wait=-1
+# 连接池中的最大空闲连接
+spring.redis.jedis.pool.max-idle=10
+# 连接池中的最小空闲连接
+spring.redis.jedis.pool.min-idle=0
+# 连接超时时间（毫秒）
+spring.redis.timeout=1000
+```
+###二、SpringBoot项目中使用redis
+有两种方法,StringRedisTemplate和RedisTemplate,因为StringRedisTemplate继承了RedisTemplate,所以两者对Redis的操作方法具有相同之处
+![](https://note-imge.oss-cn-beijing.aliyuncs.com/pasteimageintomarkdown/2020-11-17/351483585941800.png?Expires=4759180011&OSSAccessKeyId=LTAI4G1a9jwwXfvRfRgyzeZ3&Signature=vHKFsQXc%2Fl2FAWPAKbwTQRVZBKg%3D)
+
+####区别
+- 两者的数据是不共通的；也就是说StringRedisTemplate只能管理StringRedisTemplate里面的数据，RedisTemplate只能管理RedisTemplate中的数据。
+- 使用的序列化类不同
+  - RedisTemplate使用的是JdkSerializationRedisSerializer    存入数据会将数据先序列化成字节数组然后在存入Redis数据库
+  - StringRedisTemplate使用的是StringRedisSerializer
+####用法
+- 当你的redis数据库里面本来存的是字符串数据或者你要存取的数据就是字符串类型数据的时候，那就使用StringRedisTemplate即可。
+- 但是如果你的数据是复杂的对象类型，而取出的时候又不想做任何的数据转换，直接从Redis里面取出一个对象，那么使用RedisTemplate是更好的选择。
+####StringRedisTemplate对于Redis的操作方法
+```text
+        stringRedisTemplate.opsForValue() //操作String字符串类型
+        stringRedisTemplate.delete(key/collection) //根据key/keys删除
+        StringRedisTemplate.opsForList().*  //操作List类型
+        StringRedisTemplate.opsForHash().*  //操作Hash类型
+        stringRedisTemplate.opsForSet().*  //操作set类型
+        stringRedisTemplate.opsForZSet().*  //操作有序set
+```
+```java
+@SpringBootTest
+class DataApplicationTests {
+
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private RedisTemplate<Object,Object> redisTemplate;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+
+    //string类型
+    @Test
+    public void redisStringTest(){
+        //存
+        //System.out.println(stringRedisTemplate.opsForValue().get("a"));
+        //取
+        //stringRedisTemplate.opsForValue().set("b","1");
+        //设置过期时间 一分钟过后自动删除
+        //stringRedisTemplate.opsForValue().set("c","123",1, TimeUnit.MINUTES);
+        //删单个key
+        //System.out.println(stringRedisTemplate.delete("b"));
+        //删集合key
+        //System.out.println(stringRedisTemplate.delete(Lists.list("a", "b", "c")));
+        Map<String,String> map = new HashMap<>();
+        map.put("1","a");
+        map.put("2","b");
+        map.put("3","c");
+        //批量操作可以节省开支
+        //批量存
+        stringRedisTemplate.opsForValue().multiSet(map);
+        //批量取
+        List<String> list = stringRedisTemplate.opsForValue().multiGet(Lists.list("1", "2", "3"));
+        System.out.println(list);
+
+
+    }
+    //list类型
+    @Test
+    public void redisListTest(){
+        //存  left为向左边插入 right为向右插入
+        //stringRedisTemplate.opsForList().leftPush("book","java");
+        //stringRedisTemplate.opsForList().rightPush("book","python");
+        //取  可以通过弹出来取，但是这样也就相当于删除了
+        //System.out.println(stringRedisTemplate.opsForList().leftPop("book"));
+        //System.out.println(stringRedisTemplate.opsForList().rightPop("book"));
+        //通过索引来取，效率比较低，随着value的数量增多而降低。但是这样取出来的value 不会被删除
+        System.out.println(stringRedisTemplate.opsForList().index("book",0));
+
+    }
+    //hash类型
+    @Test
+    public void redisHashTest(){
+        //单个存
+        stringRedisTemplate.opsForHash().put("user","1","a");
+        stringRedisTemplate.opsForHash().put("user","2","b");
+
+        //单个取
+        Object user = stringRedisTemplate.opsForHash().get("user", "2");
+        System.out.println(user);
+        //整个取
+        Map<Object, Object> map = stringRedisTemplate.opsForHash().entries("user");
+        map.keySet().forEach(key->{
+            System.out.println(key+":"+map.get(key));
+        });
+
+    }
+    //set类型  无序列表 自动去除 可用于抽奖
+    @Test
+    public void redisSetTest(){
+        //存
+        System.out.println(stringRedisTemplate.opsForSet().add("a", "a0","a1", "b2", "a3", "v4","d4"));
+        System.out.println(stringRedisTemplate.opsForSet().add("b", "a0","a1", "b2", "a3", "v4","d4"));
+        //随机取一个  会删除
+        //System.out.println(stringRedisTemplate.opsForSet().pop("a",2l));
+        //随机取 不删除
+        //System.out.println(stringRedisTemplate.opsForSet().randomMembers("a", 3L));
+        //查看所有元素
+        //stringRedisTemplate.opsForSet().members("a").forEach(System.out::println);
+        //查看元素个数
+        //System.out.println(stringRedisTemplate.opsForSet().size("a"));
+        //求差集
+        System.out.println("差集");
+        stringRedisTemplate.opsForSet().difference("a","b").forEach(System.out::println);
+        //求交集
+        System.out.println("交集");
+        stringRedisTemplate.opsForSet().intersect("a","b").forEach(System.out::println);
+        //差集放到新的集合里
+        System.out.println(stringRedisTemplate.opsForSet().differenceAndStore("a", "b", "c"));
+        System.out.println("新集合的个数"+stringRedisTemplate.opsForSet().size("c"));
+        //求并集
+        System.out.println("并集");
+        stringRedisTemplate.opsForSet().union("a","b").forEach(System.out::println);
+    }
+}
+```
+###五种数据类型
++ redis  
+  - redis的字符串是动态字符串，是可以修改的字符串，内部结构的实现类似于Java的ArrayList,采用预分配冗余控件来减少内存的频繁分配，当字符串长度小于1M的时候，扩容是加倍现有的空间，超过1M之后，每次+1m。字符串最大长度为512M。
+  
++ list
+redis的列表相当于Java的LinkedList，注意它是链表，而不是数组。这意味着插入和删除操作非常快，时间复杂度为O(1)，但索引定位很慢，时间复杂度为O(n)。当列表弹出了最后一个元素之后，该数据结构自动删除，内存被回收。
+  - 可以用作队列、栈
