@@ -1,0 +1,36 @@
+#springmvc接收json数据
+请求体 {"id":"1","type","1"}  
+####可以用两种办法接收
+- 用Map接收  
+```java
+@Controller
+@RequetMapping("/test")
+public class TestController{
+    @ResponseBody
+    @PostMapping("/get")
+    public String get(@RequestBody Map<String,String> map){
+        String id = map.get("id");
+        String type = map.get("type");
+        return "";
+    }
+}
+```  
+- 用实体类接收
+```java
+@Controller
+@RequetMapping("/test")
+public class TestController{
+    @ResponseBody
+    @PostMapping("/get")
+    public String get(@RequestBody RequestParam param){
+        String id = param.getId();
+        String type = param.getType();
+        return "";
+    }
+}
+@Data
+class RequestParam{
+    private String id;
+    private String type;
+}
+```

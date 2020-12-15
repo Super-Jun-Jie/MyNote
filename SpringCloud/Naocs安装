@@ -1,0 +1,7 @@
+#Nacos安装
+`下载地址：https://github.com/alibaba/nacos/tags`  
+下载windows版本之后解压，修改conf文件夹里的application.properties文件。配置数据库
+![](https://note-imge.oss-cn-beijing.aliyuncs.com/pasteimageintomarkdown/2020-11-21/709761401022400.png?Expires=4759538290&OSSAccessKeyId=LTAI4G1a9jwwXfvRfRgyzeZ3&Signature=QLH2UN1VnqdxpLWNHFqOy%2B74Lds%3D)
+在本地创建nacos的数据库，把nacos-mysql.sql的内容到导进去。
+在bin目录下执行cmd命令：startup.cmd -m standalone   意思是以单机的模式运行
+
