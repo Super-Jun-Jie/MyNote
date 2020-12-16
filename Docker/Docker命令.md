@@ -5,7 +5,10 @@
 查看正在运行的容器：docker ps
 查看所有的容器：docker ps
 查看容器运行log：docker logs -f 容器id
+如果image没删干净：docker system prune -f
 ```
+![](https://note-imge.oss-cn-beijing.aliyuncs.com/pasteimageintomarkdown/2020-12-16/171210553335000.jpg?Expires=4761687990&OSSAccessKeyId=LTAI4G1a9jwwXfvRfRgyzeZ3&Signature=9NtNqsxv7fl%2B1jyjY11awNbBCUs%3D)
+
 ### 制作java服务镜像
 需要：jar文件、Dockerfile。  
 ```dockerfile
